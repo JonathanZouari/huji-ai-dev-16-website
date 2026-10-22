@@ -1,82 +1,21 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; base-uri 'none'; form-action 'none'">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b1020">
 <title>מפתחי AI 16 | האוניברסיטה העברית</title>
 <meta name="description" content="מחזור 16 של קורס מפתחי AI באוניברסיטה העברית בירושלים: LLMs, סוכנים, RAG ופרויקט גמר מעשי.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;900&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg: #0b1020; --bg2: #121a33; --text: #e8ecf8; --muted: #9aa5c4;
-    --accent: #5b8cff; --accent2: #8b5cf6; --line: #24305a; --radius: 16px;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
-  body { font-family: "Heebo", system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
-  a { color: inherit; }
-  .wrap { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
-  section { padding: 88px 0; }
-  h2 { font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 900; margin-bottom: 12px; }
-  .lead { color: var(--muted); font-size: 1.1rem; max-width: 640px; margin-bottom: 40px; }
-  .btn { display: inline-block; padding: 14px 32px; border-radius: 999px; font-weight: 700; text-decoration: none;
-    background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; transition: transform .2s; }
-  .btn:hover, .btn:focus-visible { transform: translateY(-2px); }
-  .btn.ghost { background: transparent; border: 1px solid var(--line); }
-
-  nav { position: sticky; top: 0; z-index: 10; background: rgba(11,16,32,.85); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
-  nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 64px; }
-  nav .logo { font-weight: 900; font-size: 1.2rem; text-decoration: none; }
-  nav .logo span { color: var(--accent); }
-  nav ul { display: flex; gap: 28px; list-style: none; }
-  nav ul a { text-decoration: none; color: var(--muted); }
-  nav ul a:hover { color: var(--text); }
-
-  .hero { padding: 120px 0 100px; text-align: center;
-    background: radial-gradient(ellipse at top, rgba(91,140,255,.25), transparent 60%); }
-  .badge { display: inline-block; padding: 6px 16px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); margin-bottom: 24px; }
-  .hero h1 { font-size: clamp(2.4rem, 7vw, 4.6rem); font-weight: 900; line-height: 1.15; margin-bottom: 20px; }
-  .hero h1 em { font-style: normal; background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
-  .hero p { color: var(--muted); font-size: 1.2rem; max-width: 620px; margin: 0 auto 36px; }
-  .hero .ctas { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 72px; }
-  .stat strong { display: block; font-size: 2rem; font-weight: 900; color: var(--accent); }
-  .stat span { color: var(--muted); }
-
-  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
-  .card { background: var(--bg2); border: 1px solid var(--line); border-radius: var(--radius); padding: 28px; }
-  .card .num { color: var(--accent); font-weight: 900; font-size: .9rem; }
-  .card h3 { font-size: 1.2rem; margin: 6px 0 8px; }
-  .card p { color: var(--muted); }
-  .alt { background: rgba(18,26,51,.75); }
-  .alt .card { background: var(--bg); }
-
-  details { background: var(--bg2); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px 24px; margin-bottom: 12px; }
-  summary { cursor: pointer; font-weight: 700; }
-  details p { color: var(--muted); margin-top: 10px; }
-
-  .cta-box { text-align: center; background: linear-gradient(135deg, rgba(91,140,255,.18), rgba(139,92,246,.18)); border: 1px solid var(--line); border-radius: 24px; padding: 64px 24px; }
-  .cta-box .lead { margin: 0 auto 32px; }
-  footer { border-top: 1px solid var(--line); padding: 32px 0; color: var(--muted); text-align: center; font-size: .9rem; }
-
-  #agents { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
-  header.hero, section, footer { position: relative; z-index: 1; }
-  .term { direction: ltr; text-align: left; font: .85rem/1.6 ui-monospace, Consolas, monospace; background: var(--bg2);
-    border: 1px solid var(--line); border-radius: var(--radius); max-width: 560px; height: 156px; margin: 40px auto 0; padding: 14px 18px; overflow: hidden; }
-  .term div { white-space: nowrap; overflow: hidden; }
-  .term b { color: var(--accent); font-weight: 500; }
-
-  @media (max-width: 720px) {
-    nav ul { display: none; }
-    .stats { grid-template-columns: repeat(2, 1fr); }
-    section { padding: 64px 0; }
-  }
-  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .btn { transition: none; } }
-</style>
+<link rel="stylesheet" href="css/style.css">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
 </head>
 <body>
+<a href="#main" class="skip">דלג לתוכן</a>
 <canvas id="agents" aria-hidden="true"></canvas>
+<div class="grain" aria-hidden="true"></div>
+<div class="progress" aria-hidden="true"></div>
+<div class="letterbox" aria-hidden="true"><i></i><i></i></div>
 
 <nav aria-label="ניווט ראשי">
   <div class="wrap">
@@ -87,6 +26,12 @@
       <li><a href="#audience">למי זה מתאים</a></li>
       <li><a href="#faq">שאלות נפוצות</a></li>
     </ul>
+    <details class="m-menu"><summary aria-label="תפריט">☰</summary><ul>
+      <li><a href="#about">על הקורס</a></li>
+      <li><a href="#syllabus">סילבוס</a></li>
+      <li><a href="#audience">למי זה מתאים</a></li>
+      <li><a href="#faq">שאלות נפוצות</a></li>
+    </ul></details>
     <a href="#register" class="btn">להרשמה</a>
   </div>
 </nav>
@@ -111,14 +56,15 @@
   </div>
 </header>
 
+<main id="main" tabindex="-1">
 <section id="about">
   <div class="wrap">
     <h2>למה הקורס הזה?</h2>
     <p class="lead">לא עוד הרצאות תיאורטיות. בכל מפגש כותבים קוד, בונים ומשחררים, בליווי מרצים מהאקדמיה ומהתעשייה.</p>
     <div class="grid">
-      <div class="card"><h3>🎓 מעטפת אקדמית</h3><p>תעודה מטעם האוניברסיטה העברית בירושלים, מוסד מוביל במחקר בינה מלאכותית.</p></div>
-      <div class="card"><h3>🛠️ למידה מעשית</h3><p>תרגילים, האקתונים ופרויקט גמר שנכנס ישר לתיק העבודות שלכם.</p></div>
-      <div class="card"><h3>🤝 קהילה</h3><p>רשת בוגרים מ-15 מחזורים קודמים ושיתופי פעולה עם חברות בתעשייה.</p></div>
+      <div class="card"><h3><span aria-hidden="true">🎓</span> מעטפת אקדמית</h3><p>תעודה מטעם האוניברסיטה העברית בירושלים, מוסד מוביל במחקר בינה מלאכותית.</p></div>
+      <div class="card"><h3><span aria-hidden="true">🛠️</span> למידה מעשית</h3><p>תרגילים, האקתונים ופרויקט גמר שנכנס ישר לתיק העבודות שלכם.</p></div>
+      <div class="card"><h3><span aria-hidden="true">🤝</span> קהילה</h3><p>רשת בוגרים מ-15 מחזורים קודמים ושיתופי פעולה עם חברות בתעשייה.</p></div>
     </div>
   </div>
 </section>
@@ -174,111 +120,12 @@
     </div>
   </div>
 </section>
+</main>
 
 <footer>
   <div class="wrap">© 2026 מפתחי AI 16 · האוניברסיטה העברית בירושלים</div>
 </footer>
 
-<script>
-(function () {
-  var still = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var cv = document.getElementById("agents"), cx = cv.getContext("2d");
-  var NAMES = ["Planner", "Coder", "Reviewer", "Tester", "RAG", "Deployer"];
-  var W, H, nodes = [], pulses = [], last = 0, lastPulse = 0, raf;
-  var rnd = function (n) { return Math.random() * n; };
-  function mk(label, i) {
-    return { x: rnd(W), y: rnd(H), vx: rnd(.4) - .2, vy: rnd(.4) - .2, label: label,
-      r: label ? 5 : 1.8, c: i % 2 ? "139,92,246" : "91,140,255" };
-  }
-  function build() {
-    var n = W < 720 ? 9 : 24; // plus 6 agents: ~15 / ~30 total
-    if (nodes.length === NAMES.length + n) return;
-    nodes = NAMES.map(mk).concat(Array.from({ length: n }, function (_, i) { return mk(null, i); }));
-  }
-  function resize() {
-    var d = window.devicePixelRatio || 1;
-    W = innerWidth; H = innerHeight;
-    cv.width = W * d; cv.height = H * d;
-    cx.setTransform(d, 0, 0, d, 0, 0);
-    build();
-    if (still) draw();
-  }
-  function step() {
-    nodes.forEach(function (n) {
-      n.x += n.vx; n.y += n.vy;
-      // abs() so nodes left outside after a resize head back in instead of jittering
-      if (n.x < 0 || n.x > W) n.vx = Math.abs(n.vx) * (n.x < 0 ? 1 : -1);
-      if (n.y < 0 || n.y > H) n.vy = Math.abs(n.vy) * (n.y < 0 ? 1 : -1);
-    });
-  }
-  function drawLinks() {
-    for (var i = 0; i < nodes.length; i++) for (var j = i + 1; j < nodes.length; j++) {
-      var d = Math.hypot(nodes[i].x - nodes[j].x, nodes[i].y - nodes[j].y);
-      if (d > 140) continue;
-      cx.strokeStyle = "rgba(91,140,255," + (.25 * (1 - d / 140)) + ")";
-      cx.beginPath(); cx.moveTo(nodes[i].x, nodes[i].y); cx.lineTo(nodes[j].x, nodes[j].y); cx.stroke();
-    }
-  }
-  function drawNodes() {
-    cx.font = "12px ui-monospace, Consolas, monospace";
-    nodes.forEach(function (n) {
-      cx.shadowBlur = n.label ? 14 : 0; cx.shadowColor = "rgb(" + n.c + ")";
-      cx.fillStyle = "rgba(" + n.c + "," + (n.label ? 1 : .5) + ")";
-      cx.beginPath(); cx.arc(n.x, n.y, n.r, 0, 6.2832); cx.fill();
-      cx.shadowBlur = 0;
-      if (n.label) { cx.fillStyle = "rgba(154,165,196,.9)"; cx.fillText(n.label, n.x + 10, n.y + 4); }
-    });
-  }
-  function drawPulses(t) {
-    pulses = pulses.filter(function (p) { return t - p.t < 1400; });
-    pulses.forEach(function (p) {
-      var k = Math.min((t - p.t) / 1000, 1), a = t - p.t < 1000 ? 1 : 1 - (t - p.t - 1000) / 400;
-      cx.fillStyle = "rgba(255,255,255," + a + ")"; cx.shadowBlur = 12; cx.shadowColor = "#fff";
-      cx.beginPath(); cx.arc(p.a.x + (p.b.x - p.a.x) * k, p.a.y + (p.b.y - p.a.y) * k, 3, 0, 6.2832); cx.fill();
-      cx.shadowBlur = 0;
-    });
-  }
-  function draw(t) { cx.clearRect(0, 0, W, H); drawLinks(); drawNodes(); drawPulses(t || 0); }
-  function frame(t) {
-    if (t - lastPulse > 1200) {
-      lastPulse = t;
-      var a = nodes[Math.floor(rnd(6))], b = nodes[Math.floor(rnd(6))];
-      if (a !== b) pulses.push({ a: a, b: b, t: t });
-    }
-    step(); draw(t);
-    raf = requestAnimationFrame(frame);
-  }
-  addEventListener("resize", resize);
-  resize();
-  if (!still) {
-    raf = requestAnimationFrame(frame);
-    document.addEventListener("visibilitychange", function () {
-      cancelAnimationFrame(raf);
-      if (!document.hidden) raf = requestAnimationFrame(frame);
-    });
-  }
-
-  var term = document.getElementById("term");
-  var LOG = ["[Planner] breaking task into 4 steps\u2026", "[RAG] retrieved 12 docs from vector DB", "[Coder] writing agent.py \u2713",
-    "[Tester] 24/24 tests passed", "[Reviewer] approved PR #16", "[Deployer] shipped to production \uD83D\uDE80"];
-  function lineEl(text) {
-    var m = /^(\[[^\]]+\])(.*)$/.exec(text), row = document.createElement("div"), tag = document.createElement("b");
-    tag.textContent = m[1]; row.appendChild(tag);
-    var rest = document.createTextNode(""); row.appendChild(rest);
-    term.appendChild(row);
-    while (term.children.length > 5) term.removeChild(term.firstChild);
-    var chars = Array.from(m[2]); // code points, so the emoji isn't split mid-typing
-    return function (n) { rest.nodeValue = chars.slice(0, n).join(""); return n >= chars.length; };
-  }
-  function type(i) {
-    var put = lineEl(LOG[i % LOG.length]), n = 0;
-    (function tick() {
-      if (put(++n)) return setTimeout(function () { type(i + 1); }, 600);
-      setTimeout(tick, 25);
-    })();
-  }
-  if (still) LOG.slice(-5).forEach(function (l) { lineEl(l)(99); }); else type(0);
-})();
-</script>
+<script src="js/main.js" defer></script>
 </body>
 </html>
