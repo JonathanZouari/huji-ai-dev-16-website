@@ -1,5 +1,7 @@
 (function () {
   var still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var root = document.documentElement;
+  document.addEventListener("visibilitychange", function () { root.classList.toggle("is-hidden", document.hidden); });
   var cv = document.getElementById("agents"), cx = cv.getContext("2d");
   var NAMES = ["Planner", "Coder", "Reviewer", "Tester", "RAG", "Deployer"];
   var W, H, nodes = [], pulses = [], last = 0, lastPulse = 0, raf;
@@ -40,13 +42,34 @@
   function drawNodes() {
     cx.font = "12px ui-monospace, Consolas, monospace";
     nodes.forEach(function (n) {
-      cx.shadowBlur = n.label ? 14 : 0; cx.shadowColor = "rgb(" + n.c + ")";
+      var b = n.boost ? Math.max(0, 1 - (performance.now() - n.boost) / 900) : 0;
+      cx.shadowBlur = n.label ? 14 + 26 * b : 0; cx.shadowColor = "rgb(" + n.c + ")";
       cx.fillStyle = "rgba(" + n.c + "," + (n.label ? 1 : .5) + ")";
-      cx.beginPath(); cx.arc(n.x, n.y, n.r, 0, 6.2832); cx.fill();
+      cx.beginPath(); cx.arc(n.x, n.y, n.r * (1 + b), 0, 6.2832); cx.fill();
       cx.shadowBlur = 0;
-      if (n.label) { cx.fillStyle = "rgba(154,165,196,.9)"; cx.fillText(n.label, n.x + 10, n.y + 4); }
+      if (n.label && W >= 720 && !blocked(n.x - 8, n.y - 10, n.x + 14 + cx.measureText(n.label).width, n.y + 10)) {
+        cx.fillStyle = "rgba(154,165,196,.9)"; cx.fillText(n.label, n.x + 10, n.y + 4);
+      }
     });
   }
+  // keep agent labels off the hero copy: viewport boxes of the text blocks, re-measured after scroll/resize
+  var KEEP = document.querySelectorAll(".hero .badge, .hero h1, .hero .wrap > p, .hero .ctas, #term, .hero .stats");
+  var boxes = [], measuredAt = -1e9;
+  function measure() {
+    boxes = Array.prototype.map.call(KEEP, function (el) {
+      var r = el.getBoundingClientRect(); return [r.left - 16, r.top - 12, r.right + 16, r.bottom + 12];
+    });
+    measuredAt = performance.now();
+  }
+  function blocked(x1, y1, x2, y2) {
+    if (performance.now() - measuredAt > 400) measure();
+    for (var i = 0; i < boxes.length; i++) {
+      var b = boxes[i];
+      if (x1 < b[2] && x2 > b[0] && y1 < b[3] && y2 > b[1]) return true;
+    }
+    return false;
+  }
+  addEventListener("scroll", function () { measuredAt = -1e9; }, { passive: true });
   function drawPulses(t) {
     pulses = pulses.filter(function (p) { return t - p.t < 1400; });
     pulses.forEach(function (p) {
@@ -66,8 +89,15 @@
     step(); draw(t);
     raf = requestAnimationFrame(frame);
   }
-  addEventListener("resize", resize);
+  addEventListener("resize", function () { measuredAt = -1e9; resize(); });
   resize();
+  if (still) {
+    // static frame: redraw (no motion) so labels stay clear of the copy after scrolling and font load
+    var queued = false;
+    var redraw = function () { queued = false; measuredAt = -1e9; draw(); };
+    addEventListener("scroll", function () { if (!queued) { queued = true; requestAnimationFrame(redraw); } }, { passive: true });
+    if (document.fonts) document.fonts.ready.then(redraw);
+  }
   if (!still) {
     raf = requestAnimationFrame(frame);
     document.addEventListener("visibilitychange", function () {
@@ -81,6 +111,10 @@
     "[Tester] 24/24 tests passed", "[Reviewer] approved PR #16", "[Deployer] shipped to production \uD83D\uDE80"];
   function lineEl(text) {
     var m = /^(\[[^\]]+\])(.*)$/.exec(text), row = document.createElement("div"), tag = document.createElement("b");
+    if (!still) {
+      var name = m[1].slice(1, -1);
+      for (var k = 0; k < nodes.length; k++) if (nodes[k].label === name) nodes[k].boost = performance.now();
+    }
     tag.textContent = m[1]; row.appendChild(tag);
     var rest = document.createTextNode(""); row.appendChild(rest);
     term.appendChild(row);
@@ -104,4 +138,21 @@
     })();
   }
   if (still) LOG.slice(-5).forEach(function (l) { lineEl(l)(99); }); else type(0);
+
+  if (!still && matchMedia("(hover: hover) and (pointer: fine)").matches) {
+    var pe = null;
+    var spot = function () {
+      var e = pe; pe = null;
+      var c = e.target.closest && e.target.closest(".card");
+      if (!c) return;
+      var r = c.getBoundingClientRect();
+      c.style.setProperty("--mx", (e.clientX - r.left) + "px");
+      c.style.setProperty("--my", (e.clientY - r.top) + "px");
+    };
+    document.addEventListener("pointermove", function (e) {
+      if (document.hidden) return;
+      if (!pe) requestAnimationFrame(spot);
+      pe = e;
+    }, { passive: true });
+  }
 })();

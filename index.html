@@ -4,12 +4,18 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; base-uri 'none'; form-action 'none'">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b1020">
 <title>מפתחי AI 16 | האוניברסיטה העברית</title>
 <meta name="description" content="מחזור 16 של קורס מפתחי AI באוניברסיטה העברית בירושלים: LLMs, סוכנים, RAG ופרויקט גמר מעשי.">
 <link rel="stylesheet" href="css/style.css">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
 </head>
 <body>
+<a href="#main" class="skip">דלג לתוכן</a>
 <canvas id="agents" aria-hidden="true"></canvas>
+<div class="grain" aria-hidden="true"></div>
+<div class="progress" aria-hidden="true"></div>
+<div class="letterbox" aria-hidden="true"><i></i><i></i></div>
 
 <nav aria-label="ניווט ראשי">
   <div class="wrap">
@@ -20,6 +26,12 @@
       <li><a href="#audience">למי זה מתאים</a></li>
       <li><a href="#faq">שאלות נפוצות</a></li>
     </ul>
+    <details class="m-menu"><summary aria-label="תפריט">☰</summary><ul>
+      <li><a href="#about">על הקורס</a></li>
+      <li><a href="#syllabus">סילבוס</a></li>
+      <li><a href="#audience">למי זה מתאים</a></li>
+      <li><a href="#faq">שאלות נפוצות</a></li>
+    </ul></details>
     <a href="#register" class="btn">להרשמה</a>
   </div>
 </nav>
@@ -44,14 +56,15 @@
   </div>
 </header>
 
+<main id="main" tabindex="-1">
 <section id="about">
   <div class="wrap">
     <h2>למה הקורס הזה?</h2>
     <p class="lead">לא עוד הרצאות תיאורטיות. בכל מפגש כותבים קוד, בונים ומשחררים, בליווי מרצים מהאקדמיה ומהתעשייה.</p>
     <div class="grid">
-      <div class="card"><h3>🎓 מעטפת אקדמית</h3><p>תעודה מטעם האוניברסיטה העברית בירושלים, מוסד מוביל במחקר בינה מלאכותית.</p></div>
-      <div class="card"><h3>🛠️ למידה מעשית</h3><p>תרגילים, האקתונים ופרויקט גמר שנכנס ישר לתיק העבודות שלכם.</p></div>
-      <div class="card"><h3>🤝 קהילה</h3><p>רשת בוגרים מ-15 מחזורים קודמים ושיתופי פעולה עם חברות בתעשייה.</p></div>
+      <div class="card"><h3><span aria-hidden="true">🎓</span> מעטפת אקדמית</h3><p>תעודה מטעם האוניברסיטה העברית בירושלים, מוסד מוביל במחקר בינה מלאכותית.</p></div>
+      <div class="card"><h3><span aria-hidden="true">🛠️</span> למידה מעשית</h3><p>תרגילים, האקתונים ופרויקט גמר שנכנס ישר לתיק העבודות שלכם.</p></div>
+      <div class="card"><h3><span aria-hidden="true">🤝</span> קהילה</h3><p>רשת בוגרים מ-15 מחזורים קודמים ושיתופי פעולה עם חברות בתעשייה.</p></div>
     </div>
   </div>
 </section>
@@ -107,6 +120,7 @@
     </div>
   </div>
 </section>
+</main>
 
 <footer>
   <div class="wrap">© 2026 מפתחי AI 16 · האוניברסיטה העברית בירושלים</div>
