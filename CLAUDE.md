@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Hebrew (RTL) promotional landing page for the "מפתחי AI 16" course (cohort 16) at the Hebrew University of Jerusalem.
 
-The whole site is one static file, `index.html`. It has inline CSS and loads the Heebo font from Google Fonts. There is no JavaScript, no build step, no package manager and no tests. To preview it, open the file in a browser (`Start-Process index.html`).
+The whole site is one static file, `index.html`. It has inline CSS, one inline vanilla `<script>` (the AI-agents canvas background `#agents` and the typing terminal `#term` in the hero), and loads the Heebo font from Google Fonts. There is no build step, no package manager and no test suite. The script honors `prefers-reduced-motion` (static frame, no typing) and pauses while the tab is hidden. Build terminal lines with `textContent` and text nodes, never `innerHTML`. To quick-check the script, extract it and run `node --check`. To preview it, open the file in a browser (`Start-Process index.html`).
 
 ## Structure and conventions
 
